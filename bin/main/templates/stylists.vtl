@@ -4,3 +4,46 @@
 <form action="/stylist/:id" method="post">
   <button type="submit" class="btn btn-info" id="delete-stylist">Delete stylist</button>
 </form>
+<div class = "row">
+     <div class="col m12 s12 center-align">
+
+        <h1 class="styled">Stylists</h1>
+
+     </div>
+</div>
+
+<hr>
+
+<div class="row">
+
+
+
+  <div class="col m12">
+
+    <div class="row">
+
+      #foreach($stylist in $stylists)
+     <a  href="/stylists/$stylist.getId()"> <div class="col m4 s12">
+        <div class="card-panel teal center-align">
+          <span class="white-text">
+
+
+              <h4 class="white-text">$stylist.getName()</h4>
+
+
+
+
+
+          </span>
+
+
+        </div> </a>
+      </div>
+      #end
+
+    </div>
+
+  </div>
+
+
+</div>
