@@ -1,147 +1,118 @@
-import static spark.Spark.*;
-import spark.template.velocity.VelocityTemplateEngine;
-import spark.ModelAndView;
-import spark.TemplateEngine;
-
-import static spark.debug.DebugScreen.enableDebugScreen;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.setPort;
+import static spark.Spark.staticFileLocation;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.velocity.app.VelocityEngine;
-import org.eclipse.jetty.http.MetaData.Request;
+import spark.ModelAndView;
 
 public class App {
-    public static void main(String[] args) {
-        staticFileLocation("/public");
-        String layout = "templates/layout.vtl";
+  public static void main(String[] args) {
+    staticFileLocation("/public");
+    String layout = "templates/layout.vtl";
 
-        ProcessBuilder process = new ProcessBuilder();
-        Integer port;
+    ProcessBuilder process = new ProcessBuilder();
+     Integer port;
+     if (process.environment().get("PORT") != null) {
+         port = Integer.parseInt(process.environment().get("PORT"));
+     } else {
+         port = 4567;
+     }
 
-        if (process.environment().get("PORT") != null) {
-            port = Integer.parseInt(process.environment().get("PORT"));
-        } else {
-            port = 4567;
-        }
-        setPort(port);
+    setPort(port);
 
-        get("/", (request, response) -> {
-            Map<String, Object> model = new HashMap<String, Object>();
-            model.put("stylists", Stylist.allStylist());
-            model.put("template", "templates/index.vtl");
-            return new ModelAndView(model, layout);
-        }, new VelocityEngine());
-
-    get("/clients/new",(request, response)->{
+    get("/", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("stylists", Stylist.allStylist());
+      // model.put("heroes", request.session().attribute("heroes"));
       model.put("template", "templates/index.vtl");
       return new ModelAndView(model, layout);
-    }, new VelocityEngine());
+    }, new VelocityTemplateEngine());
 
-    post("/stylist", (request, response)->{
+
+    get("/heroes", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("heroes", Hero.all());
+      model.put("template", "templates/heroes.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    get("/heroes/:id", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      Hero hero = Hero.find(Integer.parseInt(request.params(":id")));
+      model.put("hero", hero);
+      model.put("template", "templates/hero.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+
+    get("squads/new", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("template", "templates/squad-form.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/squads", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
       String name = request.queryParams("name");
-      String style = request.queryParams("style");
-      Stylist newStylist = new Stylist(name, style);
-      newStylist.save();
-      model.put("template", "templates/style-success.vtl");
+      int size = Integer.parseInt(request.queryParams("size"));
+      String cause = request.queryParams("cause");
+      new Squad(name, size, cause);
+      model.put("template", "templates/squad-success.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
-    spark.template
-    
-    get("/stylist", (reqeust, response)->{
+
+    get("/squads", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("stylists", Stylist.allStylist());
-      model.put("template", "templates/stylist.vtl");
+      model.put("squads", Squad.all());
+      model.put("template", "templates/squads.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    get("/stylist/:id", (request, response)->{
-      Map<String, Object> model= new HashMap<String, Object>();
-      Stylist stylist = Stylist.find(Integer.parseInt(request.params(":id")));
-      model.put("clients", Client.all());
-      model.put("stylist", stylist);
-      model.put("template", "templates/viewStylist.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-    //Post method for deleting client
-    post("/client/:id", (request, response) -> {
-      Map<String, Object> model = new HashMap<>();
-      Client client = Client.find(Integer.parseInt(request.params(":id")));
-      client.deleteClient();
-      model.put("stylist", client);
-      model.put("template", "templates/viewClients.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-    //Post Method to delete stylist
-    post("/stylist/:id", (request, response) -> {
-        Map<String, Object> model = new HashMap<>();
-        Stylist stylist = Stylist.find(Integer.parseInt(request.params(":id")));
-        stylist.delete();
-        model.put("stylist", stylist);
-        model.put("template", "templates/stylist.vtl");
-        return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-
-    post("/client/:id", (request, response)->{
-      Map<String, Object> model= new HashMap<String, Object>();
-      Client client = Client.find(Integer.parseInt(request.params(":id")));
-      model.put("stylist", client);
-      model.put("template", "templates/viewClients.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-    post("/client", (request, response) -> {
+    get("/squads/:id", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      Stylist stylist = Stylist.find(Integer.parseInt(request.queryParams(":id")));
-      String clientName = request.queryParams("clientName");
-      String clientStyle = request.queryParams("clientStyle");
-      Client newClient = new Client(clientName, clientStyle, stylist.getId());
-      newClient.save();
-      model.put("stylist", stylist);
-      model.put("template", "templates/client-success.vtl");
-      return new ModelAndView(model, layout);
-  }, new VelocityTemplateEngine());
-
-    get("/about", (request, response)->{
-      Map<String, Object> model= new HashMap<String, Object>();
-      model.put("clients", Client.all());
-      model.put("template", "templates/AboutUs.vtl");
+      Squad squad = Squad.find(Integer.parseInt(request.params(":id")));
+      model.put("squad", squad);
+      model.put("template", "templates/squad.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    get("/stylist/:id/viewClients", (request, response)->{
-        Map<String, Object> model= new HashMap<String, Object>();
-        Stylist stylist = Stylist.find(Integer.parseInt(request.params(":id")));
-        Client client = Client.find(Integer.parseInt(request.params(":id")));
-        model.put("clients", stylist.getClients());
-        model.put("client", client);
-        model.put("stylist", stylist);
-        model.put("template", "templates/viewClients.vtl");
-        return new ModelAndView(model, layout);
-      }, new TemplateEngine());
+    get("squads/:id/heroes/new", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      Squad squad = Squad.find(Integer.parseInt(request.params(":id")));
+      model.put("squad", squad);
+      model.put("template", "templates/squad-heroes-form.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
 
-      post("/client/:client_id/update", (request, response) -> {
-        Map<String, Object> model = new HashMap<>();
-        Client client = Client.find(Integer.parseInt(request.params(":client_id")));
-        String clientName = request.queryParams("clientName");
-        String clientStyle = request.queryParams("clientStyle");
-        client.update(clientName, clientStyle);
-        model.put("template", "templates/index.vtl");
-        return new ModelAndView(model, layout);
-    }, new VelocityEngine());
+    post("/heroes", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
 
-    get("/client/:client_id/update", (request, response) -> {
-        Map<String, Object> model = new HashMap<>();
-        Client client = Client.find(Integer.parseInt(request.params(":client_id")));
-        model.put("client", client);
-        model.put("template", "templates/updateClient.vtl");
-        return new ModelAndView(model, layout);
-    }, new VelocityEngine());
+      Squad squad = Squad.find(Integer.parseInt(request.queryParams("squadId")));
+
+      String name = request.queryParams("name");
+      int age = Integer.parseInt(request.queryParams("age"));
+      String power = request.queryParams("power");
+      String weakness = request.queryParams("weakness");
+      Hero newHero = new Hero(name, age, power, weakness);
+
+      if (Squad.heroAlreadyExists(newHero)) {
+        String heroExists = "Hero " + name + " already exists in a squad";
+        model.put("heroExists", heroExists);
+       }
+       else if (squad.getHeroes().size() >= squad.getSize()) {
+         String sizeMet = "Squad size already met";
+         model.put("sizeMet", sizeMet);
+       }
+       else{
+         squad.addHero(newHero);
+       }
+
+      model.put("squad", squad);
+      model.put("template", "templates/squad-heroes-success.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
   }
 }
