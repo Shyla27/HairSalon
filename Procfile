@@ -1,1 +1,1 @@
-web: ./build/install/herosalon/bin/herosalon
+web: ./build/install/salon/bin/salon-hub
