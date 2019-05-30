@@ -1,11 +1,11 @@
 import spark.ModelAndView;
- import spark.template.velocity.VelocityTemplateEngine;
-
  import java.util.ArrayList;
  import java.util.HashMap;
  import java.util.Map;
 
- import static spark.Spark.*;
+
+ 
+import static spark.Spark.*;
 
 
 public class App {
@@ -88,7 +88,7 @@ public class App {
 
 
 
-        //post//
+        
         post("/Success", (request, response) -> {
             Map<String, Object> model = new HashMap<String, Object>();
             String name = request.queryParams("name");
@@ -101,9 +101,10 @@ public class App {
         }, new VelocityTemplateEngine());
         post("/clientsuccess", (request, response) -> {
             Map<String, Object> model = new HashMap<String, Object>();
+
             String name = request.queryParams("name");
             String gender = request.queryParams("gender");
-            String cname = request.queryParams("cname");
+            String cname = request.queryParams("name");
             Client newClient = new Client(name, gender, cname);
             newClient.save();
             model.put("template", "templates/clientsuccess.vtl");
@@ -115,7 +116,7 @@ public class App {
             String sname = request.queryParams("sname");
             String sgender = request.queryParams("sgender");
             String cname = request.queryParams("cname");
-            Client newClient = new Client(sname, sgender, cname);
+            Client newClient = new Client(sname, sgender, sname);
             newClient.save();
             model.put("template", "templates/Clientsdisplay.vtl");
             return new ModelAndView(model, layout);
@@ -126,7 +127,7 @@ public class App {
             Stylist stylist = Stylist.find(Integer.parseInt(request.queryParams("id")));
             stylist.delete();
             model.put("salons", stylist);
-            model.put("template", "public/templates/deletesuccess.vtl");
+            model.put("template", "templates/deletesuccess.vtl");
             return new ModelAndView(model, layout);
         }, new VelocityTemplateEngine());
 
