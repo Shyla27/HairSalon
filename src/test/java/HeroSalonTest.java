@@ -2,11 +2,12 @@ import org.sql2o.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+
 public class HeroSalonTest {
 
     @Before
     public void setUp() {
-        DB.sql2o = new Sql2o("jdbc:postgresql://localhost:5432/herosalon_test", null, null);
+        DB.sql2o = new Sql2o("jdbc:postgresql://localhost:5432/herosalon_test", "shyla", "hair_salon");
     }
 
     @After
@@ -20,7 +21,7 @@ public class HeroSalonTest {
     @Test
     public void Client_instantiatesCorrectly_true() {
         Client myClient = new Client("name", "gender", "cname");
-        assertEquals(true, myClient instanceof Client);
+      assertEquals(true, myClient instanceof Client);
     }
     @Test
     public void Stylist_instantiatesCorrectly_true() {
