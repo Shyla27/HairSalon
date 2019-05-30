@@ -16,7 +16,24 @@
         <br>
            <form action="/Success.vtl" method="post">
          <br>
-
+         <label for="name">Work Experience</label>
+        <input id="name" name="name" type="text" class="form-control">
+ <div class="row">
+        <div class="input-field col s12">
+          <input id="email" type="email" class="validate">
+          <label for="email">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          This is an inline input field:
+          <div class="input-field inline">
+            <input id="email_inline" type="email" class="validate">
+            <label for="email_inline">Email</label>
+            <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
+          </div>
+        </div>
+      </div>
         <button  type="submit" class="btn btn-primary"><h4>Submit</h4></button>
      </form>
 </div>
