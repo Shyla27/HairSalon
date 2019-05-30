@@ -89,7 +89,7 @@ public class App {
 
 
         //post//
-        post("/salons", (request, response) -> {
+        post("/Success", (request, response) -> {
             Map<String, Object> model = new HashMap<String, Object>();
             String name = request.queryParams("name");
             String gender = request.queryParams("gender");

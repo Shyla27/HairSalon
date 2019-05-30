@@ -4,14 +4,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class DB {
-//    public static Sql2o sql2o = new Sql2o("jdbc:postgresql://localhost:5432/herosalon", "moringaschool", "password");
+//    public static Sql2o sql2o = new Sql2o("jdbc:postgresql://localhost:5432/herosalon", "shyla", "hair_salon");
 private static URI dbUri;
     public static Sql2o sql2o;
     static {
 
         try {
             if (System.getenv("DATABASE_URL") == null) {
-                dbUri = new URI("postgres://moringaschool:password@localhost:5432/herosalon");
+                dbUri = new URI("postgres://shyla:password@localhost:5432/hair_salon");
             } else {
                 dbUri = new URI(System.getenv("DATABASE_URL"));
             }
