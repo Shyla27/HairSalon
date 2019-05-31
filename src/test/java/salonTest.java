@@ -3,7 +3,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 
-public class HeroSalonTest {
+public class salonTest {
 
     @Before
     public void setUp() {

@@ -9,21 +9,22 @@ import static spark.Spark.*;
 
 
 public class App {
-    public static void main(String[] args) {
-        staticFileLocation("/public");
+   static int getHerokuAssignPort() {
 
-        ProcessBuilder process = new ProcessBuilder();
-        Integer port;
-        if (process.environment().get("PORT") != null) {
-            port = Integer.parseInt(process.environment().get("PORT"));
-        } else {
-            port = 4567;
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
         }
-
-        port(port);
-
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+      }
+    
+        public static void main(String[] args) {
+            port(getHerokuAssignPort());
+            staticFileLocation("/public");
+            
+    
         String layout = "/templates/layout.vtl";
-
+// get requests  to retrieve info 
         get("/", (request, response) -> {
                     Map<String, Object> model = new HashMap<String, Object>();
                     model.put("template", "templates/index.vtl");
@@ -87,7 +88,7 @@ public class App {
         }, new VelocityTemplateEngine());
 
 
-
+//Post to request change info
 
         
         post("/Success", (request, response) -> {
@@ -100,6 +101,7 @@ public class App {
             model.put("template", "templates/Success.vtl");
             return new ModelAndView(model, layout);
         }, new VelocityTemplateEngine());
+        
         post("/clientsuccess", (request, response) -> {
             Map<String, Object> model = new HashMap<String, Object>();
 
@@ -116,7 +118,7 @@ public class App {
             Map<String, Object> model = new HashMap<String, Object>();
             String sname = request.queryParams("sname");
             String sgender = request.queryParams("sgender");
-            String cname = request.queryParams("cname");
+            String cname = request.queryParams("sname");
             Client newClient = new Client(sname, sgender, sname);
             newClient.save();
             model.put("template", "templates/Clientsdisplay.vtl");

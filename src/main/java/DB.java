@@ -3,25 +3,5 @@ import org.sql2o.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class DB {
-//    public static Sql2o sql2o = new Sql2o("jdbc:postgresql://localhost:5432/herosalon", "shyla", "hair_salon");
-private static URI dbUri;
-    public static Sql2o sql2o;
-    static {
-
-        try {
-            if (System.getenv("DATABASE_URL") == null) {
-                dbUri = new URI("postgres://shyla:password@localhost:5432/hair_salon");
-            } else {
-                dbUri = new URI(System.getenv("DATABASE_URL"));
-            }
-            int port = dbUri.getPort();
-            String host = dbUri.getHost();
-            String path = dbUri.getPath();
-            String username = (dbUri.getUserInfo() == null) ? null : dbUri.getUserInfo().split(":")[0];
-            String password = (dbUri.getUserInfo() == null) ? null : dbUri.getUserInfo().split(":")[1];
-            sql2o = new Sql2o("jdbc:postgresql://" + host + ":" + port + path, username, password);
-        } catch (URISyntaxException e ) {
-        }
-    }
+public class DB {  public static Sql2o sql2o = new Sql2o("jdbc:postgresql://ec2-54-225-72-238.compute-1.amazonaws.com:5432/d7gq3ej17bq4oa", "meqkoaeggmflqa", "e39a8089d7a3458958751d6206c2726a468bee7ff58727ba8680b33efa8cf5ee");
 }
